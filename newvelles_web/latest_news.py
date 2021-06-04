@@ -1,6 +1,7 @@
 import json
+import urllib.request
 
-from newvelles_web import LATEST_NEWS
+LATEST_NEWS_URI = 'https://public-newvelles-data.s3-us-west-1.amazonaws.com/latest_news.json'
 
 
 def _escape_news(news_dict):
@@ -13,7 +14,8 @@ def _escape_news(news_dict):
 
 def get_latest_news():
     """
-    TODO: Get latest news file from S3 bucket
-    e.g., https://public-newvelles-data.s3-us-west-1.amazonaws.com/latest_news.json
+    Get latest news file from S3 bucket
     """
-    return _escape_news(LATEST_NEWS)
+    with urllib.request.urlopen(LATEST_NEWS_URI) as f:
+        news = json.loads(f.read().decode('utf-8'))
+        return _escape_news(news)
