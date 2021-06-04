@@ -1,0 +1,9 @@
+{
+    "flask": {
+        "image": ":newvelles-web-service.newvelles-web-container.2",
+        "ports": {
+            "5000": "HTTP"
+        }
+    }
+}
+
