@@ -1,7 +1,6 @@
 import json
 import urllib.request
 
-
 LATEST_NEWS_URI = 'https://public-newvelles-data.s3-us-west-1.amazonaws.com/latest_news.json'
 
 
