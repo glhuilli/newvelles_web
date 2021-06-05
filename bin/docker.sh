@@ -1,4 +1,5 @@
 # rebuild the container with new code (version X)
+# Note that version X should be N+1 where N is the max version in docker images
 docker build -t newvelles-web-container:vX .
 
 # run container locally
