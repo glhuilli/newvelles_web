@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
       name='newvelles_web',
-      version='0.0.1',
+      version='0.0.2',
       description='Flask-based webapp for newvelles',
       url='https://github.com/glhuilli/newvelles_web',
       author="Gaston L'Huillier",
