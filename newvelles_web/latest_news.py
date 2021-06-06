@@ -1,6 +1,7 @@
 import json
 import urllib.request
 
+
 LATEST_NEWS_URI = 'https://public-newvelles-data.s3-us-west-1.amazonaws.com/latest_news.json'
 
 
@@ -8,7 +9,7 @@ def _escape_news(news_dict):
     """
     Assume the string that needs to be scaped is the title
     """
-    scaped_dic = json.dumps(news_dict).replace('\'', '-')
+    scaped_dic = json.dumps(news_dict).replace('\'', '-').replace('’', '-')
     return json.loads(scaped_dic)
 
 
