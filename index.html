@@ -10,7 +10,8 @@
     <div id="show-news"></div>
   </body>
   <script type="text/javascript">
-    var value = JSON.parse('news_json');
+    var json_news = 'news_json'
+    var value = JSON.parse(json_news.toString());
     window.onload = function() {
       appendJSON(value);
     };

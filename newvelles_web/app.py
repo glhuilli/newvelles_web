@@ -25,6 +25,7 @@ def news():
 def index():
     ret = open("index.html").read()
     latest_news = get_latest_news()
+    # print(json.dumps(latest_news, indent=2))
     return ret.replace('news_json', json.dumps(latest_news))
 
 
