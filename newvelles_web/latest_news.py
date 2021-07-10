@@ -1,7 +1,7 @@
 import json
 import urllib.request
 
-LATEST_NEWS_URI = 'https://public-newvelles-data.s3-us-west-1.amazonaws.com/latest_news.json'
+LATEST_NEWS_URI = 'https://public-newvelles-data-bucket.s3-us-west-2.amazonaws.com/latest_news.json'
 
 
 def _escape_news(news_dict):
