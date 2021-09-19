@@ -6,10 +6,16 @@ function jsonToHTML(input) {
       const repSm = /</gi;
       const repGt = />/gi;
       const htmlArray = [`<ul style="display:${display}">`];
+      var counter = 0;
       for( let [key, value] of Object.entries(json)) {
         if(typeof(value) === 'object' && Object.keys(value).length > 0) {
-          htmlArray.push(`<li>${key}:<span class="clickable" style="cursor: pointer">+</span>`)
-          htmlArray.push(jsonToHTML(value)(false)(htmlToString));
+          if(counter % 2 == 0) {
+            htmlArray.push(`<li class='news1'>${key}:<span class="clickable" style="cursor: pointer">+</span>`)
+            htmlArray.push(jsonToHTML(value)(false)(htmlToString));
+          } else {
+            htmlArray.push(`<li class='news2'>${key}:<span class="clickable" style="cursor: pointer">+</span>`)
+            htmlArray.push(jsonToHTML(value)(false)(htmlToString));
+          }
         } else {
           let content;
           if(Array.isArray(value)) {
@@ -29,6 +35,7 @@ function jsonToHTML(input) {
           }
           htmlArray.push(`<li>${key}: ${content}</li>`)
         }
+        counter += 1;
       }
       htmlArray.push('</ul>')
       return htmlArray.flat().join('');

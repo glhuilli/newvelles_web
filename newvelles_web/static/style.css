@@ -1,0 +1,42 @@
+body {
+    background: #757575;
+    color: Gainsboro;
+}
+
+#show-news li.news1
+{
+  background-color: #616161;
+}
+
+#show-news li.news2
+{
+  background-color: #404040;
+}
+
+#show-news ul li.news1:hover {
+  background: #555;
+}
+
+#show-news ul li.news2:hover {
+  background: #555;
+}
+
+ul {
+  list-style-type: none;
+}
+
+a:link {
+  color: red;
+}
+
+a:visited {
+  color: green;
+}
+
+a:hover {
+  color: hotpink;
+}
+
+a:active {
+  color: blue;
+}
