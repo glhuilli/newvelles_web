@@ -1,6 +1,8 @@
 body {
     background: #757575;
     color: Gainsboro;
+    font-size: x-large;
+    font-family: 'Play', sans-serif;
 }
 
 #show-news li.news1
@@ -39,4 +41,17 @@ a:hover {
 
 a:active {
   color: blue;
+}
+
+div.metadata {
+  color: #a5a5ff;
+  font-size: x-large;
+  font-family: 'Play', sans-serif;
+
+  /* make div sticky  */
+  background-color: #000000;
+  position:fixed;
+  top:0;
+  width:100%;
+  z-index:100;
 }

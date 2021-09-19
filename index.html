@@ -7,12 +7,15 @@
     <script src="./static/index.js" charset="utf-8"></script>
   </head>
   <body>
-    <h3>List of news</h3>
+    <br>
+    <div class='metadata' id="show-metadata"></div>
     <div id="show-news"></div>
   </body>
   <script type="text/javascript">
+    var metadata = 'news_metadata'
     var value = JSON.parse(JSON.stringify('news_json'));
     window.onload = function() {
+      document.getElementById('show-metadata').innerHTML = metadata;
       appendJSON(value);
     };
 

@@ -10,10 +10,16 @@ LOCAL_NEWS = './data/latest_news.json'
 
 
 def _clean_string(s):
+    """
+    Removing special characters that might not be able to render HTML
+    """
     return s.replace('"', '').replace('\'', '-')
 
 
 def map_nested_dicts(ob, func):
+    """
+    Process recursively all elements in the dictionary using the input function
+    """
     if isinstance(ob, collections.Mapping):
         return {_clean_string(k): map_nested_dicts(v, func) for k, v in ob.items()}
     else:

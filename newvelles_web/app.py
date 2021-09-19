@@ -5,6 +5,7 @@ from flask import Flask
 
 from newvelles_web.config import config
 from newvelles_web.latest_news import get_latest_news
+from newvelles_web.metadata import get_latest_news_metadata
 
 logging.basicConfig(filename='record.log',
                     level=logging.DEBUG,
@@ -27,7 +28,14 @@ def news():
 
 @app.route("/")
 def index():
+    # Semi hack: fetch the index.html and then replace with relevant info
     ret = open("index.html").read()
+
+    # TODO: Use second component as version to control how the data is processed
+    md_date_info, _ = get_latest_news_metadata(
+                                local=CONFIG['PARAMS']['local'] == 'True')
+    ret = ret.replace('news_metadata', md_date_info)
+
     latest_news = get_latest_news(local=CONFIG['PARAMS']['local'] == 'True')
     return ret.replace('news_json', json.dumps(latest_news))
 
