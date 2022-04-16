@@ -47,6 +47,7 @@ div.metadata {
   color: #a5a5ff;
   font-size: x-large;
   font-family: 'Play', sans-serif;
+  text-align: center;
 
   /* make div sticky  */
   background-color: #000000;
@@ -54,4 +55,26 @@ div.metadata {
   top:0;
   width:100%;
   z-index:100;
+}
+
+div.footer {
+  color: #a5a5ff;
+  font-size: x-large;
+  font-family: 'Play', sans-serif;
+  text-align: center;
+
+  /* make div sticky  */
+  background-color: #000000;
+  position:fixed;
+  bottom: 0;
+  width:100%;
+  z-index:100;
+}
+
+a.footer {
+  color: white;
+}
+
+a.footer:hover {
+  color: hotpink;
 }

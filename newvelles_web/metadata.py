@@ -34,6 +34,6 @@ def get_latest_news_metadata(local: Optional[bool] = False):
         with urllib.request.urlopen(LATEST_NEWS_URI) as f:
             news = json.loads(f.read().decode('utf-8'))
     metadata_time = _gmt_to_pdt(news['datetime'])
-    text_string = f"News fetched {metadata_time}"
+    text_string = f"newvelles.com <br> News fetched at {metadata_time}"
     version = news['version']
     return text_string, version
