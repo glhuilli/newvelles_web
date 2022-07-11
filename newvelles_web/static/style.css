@@ -3,6 +3,8 @@ body {
     color: Gainsboro;
     font-size: x-large;
     font-family: 'Play', sans-serif;
+    padding-top: 60px;
+    padding-bottom: 40px;
 }
 
 #show-news li.news1
