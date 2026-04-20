@@ -1,0 +1,106 @@
+{
+  "": {
+    "[Uncategorized News]": {
+      "Local story without clear category": {
+        "title": "Local story without clear category",
+        "link": "https://example.com/local-story",
+        "timestamp": "Wed, 11 Mar 2026 09:44:07 +0000",
+        "source": "https://rss.example.com/feed.xml"
+      }
+    }
+  },
+  "[Technology]": {
+    "[AI Developments]": {
+      "New AI model released by tech giant": {
+        "title": "New AI model released by tech giant",
+        "link": "https://techcrunch.com/2026/03/11/ai-model",
+        "timestamp": "Wed, 11 Mar 2026 10:15:23 +0000",
+        "source": "https://feeds.feedburner.com/TechCrunch"
+      },
+      "Researchers achieve breakthrough in machine learning": {
+        "title": "Researchers achieve breakthrough in machine learning",
+        "link": "https://nature.com/articles/ml-breakthrough",
+        "timestamp": "Wed, 11 Mar 2026 08:30:12 +0000",
+        "source": "https://rss.nature.com/feed"
+      }
+    },
+    "[Software Updates]": {
+      "Major security patch released for popular browser": {
+        "title": "Major security patch released for popular browser",
+        "link": "https://mozilla.org/blog/security-update",
+        "timestamp": "Wed, 11 Mar 2026 07:22:45 +0000",
+        "source": "https://blog.mozilla.org/feed/"
+      }
+    }
+  },
+  "[Politics] [Elections] [Campaign 2026]": {
+    "[Presidential Race]": {
+      "Candidate announces new policy platform": {
+        "title": "Candidate announces new policy platform",
+        "link": "https://nytimes.com/2026/03/11/politics/candidate-policy",
+        "timestamp": "Wed, 11 Mar 2026 11:05:33 +0000",
+        "source": "https://rss.nytimes.com/services/xml/rss/nyt/Politics.xml"
+      },
+      "Poll shows tight race in swing states": {
+        "title": "Poll shows tight race in swing states",
+        "link": "https://washingtonpost.com/politics/poll-swing-states",
+        "timestamp": "Wed, 11 Mar 2026 09:18:56 +0000",
+        "source": "https://feeds.washingtonpost.com/rss/politics"
+      }
+    },
+    "[Debate Preparations]": {
+      "Networks announce debate schedule and format": {
+        "title": "Networks announce debate schedule and format",
+        "link": "https://cnn.com/2026/03/11/politics/debate-schedule",
+        "timestamp": "Wed, 11 Mar 2026 14:42:18 +0000",
+        "source": "https://rss.cnn.com/rss/cnn_allpolitics.rss"
+      }
+    }
+  },
+  "[Climate Change] [Environment]": {
+    "[Global Warming]": {
+      "New climate report warns of accelerating temperature rise": {
+        "title": "New climate report warns of accelerating temperature rise",
+        "link": "https://theguardian.com/environment/2026/mar/11/climate-report",
+        "timestamp": "Wed, 11 Mar 2026 06:15:09 +0000",
+        "source": "https://theguardian.com/environment/rss"
+      },
+      "Scientists call for urgent action on emissions": {
+        "title": "Scientists call for urgent action on emissions",
+        "link": "https://bbc.com/news/science-environment-climate",
+        "timestamp": "Wed, 11 Mar 2026 12:33:27 +0000",
+        "source": "https://feeds.bbci.co.uk/news/science_and_environment/rss.xml"
+      }
+    },
+    "[Renewable Energy]": {
+      "Solar power reaches new efficiency milestone": {
+        "title": "Solar power reaches new efficiency milestone",
+        "link": "https://renewableenergyworld.com/solar-efficiency",
+        "timestamp": "Wed, 11 Mar 2026 13:50:41 +0000",
+        "source": "https://renewableenergyworld.com/feed/"
+      },
+      "Wind farm project approved in coastal region": {
+        "title": "Wind farm project approved in coastal region",
+        "link": "https://reuters.com/markets/commodities/wind-farm",
+        "timestamp": "Wed, 11 Mar 2026 10:28:15 +0000",
+        "source": "https://reuters.com/markets/commodities/rss"
+      }
+    }
+  },
+  "[Sports] [Basketball]": {
+    "[NBA Playoffs]": {
+      "Team secures playoff spot with victory": {
+        "title": "Team secures playoff spot with victory",
+        "link": "https://espn.com/nba/story/playoff-spot",
+        "timestamp": "Wed, 11 Mar 2026 03:22:44 +0000",
+        "source": "https://espn.com/espn/rss/nba/news"
+      },
+      "Star player reaches career milestone": {
+        "title": "Star player reaches career milestone",
+        "link": "https://sports.yahoo.com/nba/player-milestone",
+        "timestamp": "Wed, 11 Mar 2026 04:15:52 +0000",
+        "source": "https://sports.yahoo.com/nba/rss.xml"
+      }
+    }
+  }
+}

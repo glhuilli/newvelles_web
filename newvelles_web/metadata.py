@@ -17,7 +17,12 @@ def _gmt_to_pdt(time_string):
     """
     pdt_tz = timezone('America/Los_Angeles')
     gmt_tz = timezone('Etc/GMT')
-    local_time = gmt_tz.localize(parser.parse(time_string))
+    # Parse the datetime and make it naive if it has timezone info
+    dt = parser.parse(time_string)
+    if dt.tzinfo is not None:
+        # Convert to UTC, then make naive for localization
+        dt = dt.replace(tzinfo=None)
+    local_time = gmt_tz.localize(dt)
     pdt_time = local_time.astimezone(pdt_tz)
     return pdt_time.isoformat()
 

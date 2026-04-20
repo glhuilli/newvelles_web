@@ -1,4 +1,4 @@
-import collections
+import collections.abc
 import json
 import re
 from typing import Optional
@@ -20,7 +20,7 @@ def map_nested_dicts(ob, func):
     """
     Process recursively all elements in the dictionary using the input function
     """
-    if isinstance(ob, collections.Mapping):
+    if isinstance(ob, collections.abc.Mapping):
         return {_clean_string(k): map_nested_dicts(v, func) for k, v in ob.items()}
     else:
         return func(ob)
