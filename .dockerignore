@@ -1,0 +1,96 @@
+# ==============================================================================
+# Newvelles Web - Docker Ignore File
+# ==============================================================================
+# Excludes files from Docker build context to optimize build speed and size
+#
+
+# Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+dist-python/
+build/
+eggs/
+.eggs/
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Testing
+tests/
+test-results/
+playwright-report/
+coverage/
+.coverage
+*.coverage
+htmlcov/
+
+# Logs
+*.log
+record.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Deployment artifacts
+.deployments/
+containers-*.json
+deployment-*.log
+bin/deploy.sh
+bin/rollback.sh
+bin/health-check.sh
+
+# Documentation (not needed in production)
+docs/
+*.md
+!README.md
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+.DS_Store
+*.sublime-*
+
+# OS files
+Thumbs.db
+.DS_Store
+*.bak
+
+# Environment files (should use container env vars instead)
+.env
+.env.*
+
+# Build artifacts (we build inside Docker)
+dist/
+
+# Development config
+.editorconfig
+.prettierrc
+.eslintrc*
+
+# CI/CD (not needed in container)
+.github/
+
+# Playwright browsers (installed via npm in Docker)
+playwright/.cache/

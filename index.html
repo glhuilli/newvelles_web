@@ -1,64 +1,35 @@
 <!DOCTYPE html>
 <html>
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-GVR5XY6198"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', 'G-GVR5XY6198');
-  </script>
   <head>
-    <link rel="stylesheet" href="./static/style.css">
     <meta charset="utf-8">
-    <title>News viewer</title>
-    <script src="./static/index.js" charset="utf-8"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>newvelles - News Digest</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Serif+Pro:wght@400;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/src/styles/design-system.css">
+    <link rel="stylesheet" href="/src/styles/app.css">
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-GVR5XY6198"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-GVR5XY6198');
+    </script>
   </head>
   <body>
-    <br>
-    <div class='metadata' id="show-metadata"></div>
-    <div id="show-news"></div>
+    <div id="app" class="app">
+      <!-- App content will be rendered here by JavaScript -->
+    </div>
+
+    <!-- Load the main JavaScript module -->
+    <script type="module" src="/src/main.js"></script>
   </body>
-  <script type="text/javascript">
-    var metadata = 'news_metadata'
-    var value = JSON.parse(JSON.stringify('news_json'));
-    window.onload = function() {
-      document.getElementById('show-metadata').innerHTML = metadata;
-      appendJSON(value);
-    };
-
-    function buttonClickHandler() {
-      console.log('click');
-      appendJSON(document.getElementById('text-area').value)
-    }
-
-    function getJSONfile(event) {
-      event.preventDefault();
-      const jsonAddress = document.getElementById('json-file').value;
-      fetch(jsonAddress)
-        .then(response => response.json())
-        .then(data => {
-          appendJSON(data);
-        });
-    }
-
-    function appendJSON(data) {
-      const htmlToString = false;
-      const jsonHTML = jsonToHTML(data)(true)(htmlToString);
-      document.getElementById('show-news').innerHTML =  jsonHTML;
-      setClickListeners();
-    }
-  </script>
-  <div class="footer">
-    © 2023
-    <a class="footer" href='https://glhuilli.github.io/' target="#">
-      @glhuilli
-    </a>
-    <br>
-    For more details check
-    <a class="footer" href='https://glhuilli.github.io/newvelles.html' target="#">
-      this link
-    </a>
-  </div>
 </html>

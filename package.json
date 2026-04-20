@@ -1,0 +1,26 @@
+{
+  "name": "newvelles-web",
+  "version": "1.0.0",
+  "description": "News digest web interface",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "npm run test:unit && npm run test:integration && npm run test:e2e",
+    "test:unit": "vitest run --dir tests/unit",
+    "test:integration": "vitest run --dir tests/integration",
+    "test:e2e": "playwright test",
+    "test:coverage": "vitest run --coverage"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.40.1",
+    "@testing-library/dom": "^9.3.3",
+    "@vitest/ui": "^1.1.0",
+    "jsdom": "^23.0.1",
+    "playwright": "^1.40.1",
+    "vite": "^5.0.10",
+    "vitest": "^1.1.0"
+  },
+  "dependencies": {}
+}
