@@ -1,5 +1,10 @@
 # Newvelles UI/UX Improvements - Development Notes
 
+> **2026-08-17 — the redesign shipped.** The board+wire UI now serves at `/`
+> (newvelles.com); the UI documented below lives at `/classic` during the
+> transition. **Read `docs/REDESIGN_STATUS.md` first** for current
+> architecture, data-source modes, and the two deploy environment quirks.
+
 This document captures key use cases, improvements, and fixes implemented during the Newvelles redesign project.
 
 ## Phase 3 - Interaction Polish & Accessibility (Completed)
