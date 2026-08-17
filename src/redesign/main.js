@@ -20,6 +20,12 @@ const SOURCES = {
     stories: '/stories.json',
     momentum: '/momentum.json',
   },
+  local: {
+    // your own pipeline output: run the backend CLI, then copy
+    // stories.json + momentum.json into data/local/ (gitignored)
+    stories: '/data/local/stories.json',
+    momentum: '/data/local/momentum.json',
+  },
 };
 
 function dataSource() {
