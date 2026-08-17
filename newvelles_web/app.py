@@ -116,21 +116,31 @@ def health():
         }), 500
 
 
+def _serve_page(filename):
+    """Serve a Vite-built HTML shell from dist/ (or the repo root in dev)."""
+    try:
+        page_path = os.path.join(app.static_folder, filename)
+        if os.path.exists(page_path):
+            return open(page_path).read()
+        return open(filename).read()  # dev fallback
+    except FileNotFoundError:
+        return "Frontend not built. Run 'npm run build' first.", 500
+
+
 @app.route("/")
 def index():
     """
-    Serve the Vite-built HTML shell - data is fetched via API
+    The redesigned board+wire is the front door (M5 cutover swap).
     """
-    try:
-        # In production (Docker), serve from dist/
-        index_path = os.path.join(app.static_folder, 'index.html')
-        if os.path.exists(index_path):
-            return open(index_path).read()
-        else:
-            # Fallback for development
-            return open("index.html").read()
-    except FileNotFoundError:
-        return "Frontend not built. Run 'npm run build' first.", 500
+    return _serve_page('redesign.html')
+
+
+@app.route("/classic")
+def classic():
+    """
+    The previous three-level UI, kept reachable during the transition.
+    """
+    return _serve_page('index.html')
 
 
 def main():
