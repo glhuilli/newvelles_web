@@ -14,7 +14,12 @@ RUN npm install
 # Copy source files for Vite build
 COPY src ./src
 COPY index.html ./
+COPY redesign.html ./
 COPY vite.config.js ./
+
+# The deployed redesign bundle reads live S3-backed endpoints, not fixtures
+ARG NV_DATA_SOURCE=live
+ENV VITE_NV_DATA_SOURCE=$NV_DATA_SOURCE
 
 # Build frontend (outputs to dist/)
 RUN npm run build

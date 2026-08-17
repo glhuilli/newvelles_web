@@ -8,6 +8,7 @@ from flask_cors import CORS
 from newvelles_web.config import config
 from newvelles_web.latest_news import get_latest_news
 from newvelles_web.metadata import get_latest_news_metadata
+from newvelles_web.stories import get_momentum, get_stories
 
 logging.basicConfig(filename='record.log',
                     level=logging.DEBUG,
@@ -21,7 +22,9 @@ if not os.path.exists(static_folder):
     static_folder = 'dist'
 
 app = Flask(__name__, static_folder=static_folder, static_url_path='')
-CORS(app, resources={r"/news": {"origins": "*"}, r"/metadata": {"origins": "*"}, r"/health": {"origins": "*"}})
+CORS(app, resources={r"/news": {"origins": "*"}, r"/metadata": {"origins": "*"},
+                     r"/stories.json": {"origins": "*"}, r"/momentum.json": {"origins": "*"},
+                     r"/health": {"origins": "*"}})
 
 CONFIG = config()
 
@@ -34,6 +37,22 @@ def news():
     # TODO: add options to request like request.args.get('from', default='')
     latest_news = get_latest_news(local=CONFIG['PARAMS']['local'] == 'True')
     return jsonify(latest_news)
+
+
+@app.route("/stories.json")
+def stories():
+    """
+    Return the redesign's stories.json (schema 0.3.0) from the public bucket
+    """
+    return jsonify(get_stories(local=CONFIG['PARAMS']['local'] == 'True'))
+
+
+@app.route("/momentum.json")
+def momentum():
+    """
+    Return the redesign's momentum.json (rolling 14-day series) from the public bucket
+    """
+    return jsonify(get_momentum(local=CONFIG['PARAMS']['local'] == 'True'))
 
 
 @app.route("/metadata")
