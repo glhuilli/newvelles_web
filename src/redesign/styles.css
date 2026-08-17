@@ -378,6 +378,8 @@ button {
   .nv-momentum-cell svg { width: 70px; height: 18px; }
   .nv-sources-cell { display: none; }
   .nv-row, .nv-pill, .nv-ghost, .nv-sort button { min-height: 44px; }
+  .nv-sort { width: 100%; }
+  .nv-sort button { flex: 1; }
   .nv-pill { display: inline-flex; align-items: center; }
   .nv-expanded { padding-left: 16px; }
 }

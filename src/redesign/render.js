@@ -171,7 +171,7 @@ function renderBoard(data) {
     <div class="nv-header-actions">
       <div class="nv-search">
         <span class="nv-icon" aria-hidden="true">⌕</span>
-        <input type="search" data-board-search placeholder="Search all stories" value="" aria-label="Search all stories">
+        <input type="search" data-board-search name="board-search" id="board-search" placeholder="Search all stories" value="" aria-label="Search all stories">
       </div>
       <button class="nv-ghost" data-go-wire>Full wire →</button>
     </div>
@@ -317,7 +317,7 @@ function renderWire(data, state) {
     <div class="nv-header-actions">
       <div class="nv-search nv-search--wire">
         <span class="nv-icon" aria-hidden="true">⌕</span>
-        <input type="search" data-wire-search placeholder="Filter stories, sources, headlines" value="${esc(query)}" aria-label="Filter stories">
+        <input type="search" data-wire-search name="wire-search" id="wire-search" placeholder="Filter stories, sources, headlines" value="${esc(query)}" aria-label="Filter stories">
         ${query ? '<button class="nv-clear" data-clear-query aria-label="Clear search">×</button>' : ''}
       </div>
       <div class="nv-sort" role="group" aria-label="Sort stories">
