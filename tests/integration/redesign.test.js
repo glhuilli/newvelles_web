@@ -162,6 +162,21 @@ describe('wire', () => {
   });
 });
 
+describe('credit', () => {
+  it('both views credit the developer with a link to glhuilli.github.io', () => {
+    // board
+    let credit = container.querySelector('.nv-credit a');
+    expect(credit.getAttribute('href')).toBe('https://glhuilli.github.io/');
+    expect(credit.getAttribute('target')).toBe('_blank');
+    expect(credit.getAttribute('rel')).toBe('noopener');
+    expect(container.querySelector('.nv-credit').textContent).toContain('developed by @glhuilli');
+    // wire
+    setState({ view: 'wire' });
+    credit = container.querySelector('.nv-credit a');
+    expect(credit.getAttribute('href')).toBe('https://glhuilli.github.io/');
+  });
+});
+
 describe('board search handoff', () => {
   it('typing in the board search switches to the wire with the query applied', () => {
     const input = container.querySelector('[data-board-search]');

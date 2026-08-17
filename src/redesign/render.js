@@ -91,6 +91,10 @@ function seriesRange(story) {
   return `${fmt(series[0].date)} – ${fmt(series[series.length - 1].date)}`;
 }
 
+function renderCredit() {
+  return `<div class="nv-credit">developed by <a href="https://glhuilli.github.io/" target="_blank" rel="noopener">@glhuilli</a></div>`;
+}
+
 /* ---------------- board ---------------- */
 
 function renderBoard(data) {
@@ -197,7 +201,8 @@ function renderBoard(data) {
         <div class="nv-pills">${sectionPills}</div>
       </div>
     </aside>
-  </div>`;
+  </div>
+  ${renderCredit()}`;
 }
 
 /* ---------------- wire ---------------- */
@@ -336,6 +341,7 @@ function renderWire(data, state) {
       <div>${footerLine}</div>
       <div class="nv-footer-note">Momentum reads the last 14 days of coverage.</div>
     </div>
+    ${renderCredit()}
   </div>`;
 }
 

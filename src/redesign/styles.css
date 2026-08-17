@@ -383,3 +383,15 @@ button {
   .nv-pill { display: inline-flex; align-items: center; }
   .nv-expanded { padding-left: 16px; }
 }
+
+/* ---------- credit ---------- */
+.nv-credit {
+  font-size: 11px;
+  color: var(--nv-text-faint);
+  padding-top: 6px;
+}
+.nv-credit a {
+  color: var(--nv-text-dim);
+  text-decoration: none;
+}
+.nv-credit a:hover { color: var(--nv-accent); }
