@@ -12,6 +12,14 @@ export default defineConfig({
         target: 'http://localhost:5001',
         changeOrigin: true,
       },
+      '/stories.json': {
+        target: 'http://localhost:5001',
+        changeOrigin: true,
+      },
+      '/momentum.json': {
+        target: 'http://localhost:5001',
+        changeOrigin: true,
+      },
     },
   },
   build: {
