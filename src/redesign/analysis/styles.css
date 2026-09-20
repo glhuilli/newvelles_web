@@ -55,7 +55,12 @@
 .an-root .an-tooltip { position: fixed; pointer-events: none; z-index: 10; display: none; background: var(--nv-raised); color: var(--ink); border: 1px solid var(--nv-border); border-radius: 8px; padding: 7px 10px; font-size: 12px; line-height: 1.45; box-shadow: 0 6px 20px rgba(0,0,0,0.35); max-width: 280px; }
 .an-root .an-tooltip .t-date { font: 10px var(--nv-mono); letter-spacing: 0.08em; color: var(--muted); text-transform: uppercase; }
 .an-root .an-tooltip .t-strong { font-weight: 500; }
-.an-root .ledger-wrap { max-height: calc(100vh - 260px); overflow: auto; }
+/* Sticky headers pin to the scrollport, not the padding edge: any top padding
+   on the scroll box becomes a strip where rows show above the header. So the
+   box has no vertical padding and the header cells carry the top spacing. */
+.an-root .ledger-wrap { max-height: calc(100vh - 260px); overflow: auto; padding-top: 0; padding-bottom: 0; }
+.an-root .ledger-wrap table.ledger th { padding-top: 14px; }
+.an-root .ledger-wrap table.ledger tbody tr:last-child td { border-bottom: 0; padding-bottom: 12px; }
 .an-root table.ledger { width: 100%; border-collapse: collapse; font-size: 13px; }
 .an-root table.ledger th { position: sticky; top: 0; background: var(--surface); z-index: 1; text-align: left; font: 500 10px var(--nv-mono); letter-spacing: 0.11em; text-transform: uppercase; color: var(--muted); padding: 6px 10px 8px; border-bottom: 1px solid var(--baseline); cursor: pointer; white-space: nowrap; }
 .an-root table.ledger th.sorted { color: var(--accent); }
