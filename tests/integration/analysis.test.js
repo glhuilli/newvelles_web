@@ -2,7 +2,7 @@
  * Integration: the Analysis view against the trimmed fixture in jsdom.
  * Panel-specific assertions are appended by the panel tasks.
  */
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { joinMomentum } from '../../src/redesign/data.js';
 import { attachHandlers, render } from '../../src/redesign/render.js';
@@ -18,14 +18,22 @@ const entry = index.entries[0];
 
 let container;
 let failIndex = false;
+let unsubscribe = null;
 
 function mount() {
   document.body.innerHTML = '<div id="app"></div>';
   container = document.getElementById('app');
   attachHandlers(container);
-  subscribe(() => render(container, data));
+  // Keep the unsubscribe: a leaked listener re-renders (and remounts the D3
+  // timeline) once per earlier test on every state change.
+  unsubscribe = subscribe(() => render(container, data));
   render(container, data);
 }
+
+afterEach(() => {
+  if (unsubscribe) unsubscribe();
+  unsubscribe = null;
+});
 
 const q = (sel) => container.querySelector(sel);
 const until = (fn) => vi.waitFor(fn, { timeout: 2000 });
