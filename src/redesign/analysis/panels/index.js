@@ -5,7 +5,6 @@
  */
 import * as timeline from './timeline.js';
 import * as archetypes from './archetypes.js';
-import * as stats from './stats.js';
 import * as categories from './categories.js';
 import * as topstories from './topstories.js';
 
@@ -13,7 +12,6 @@ export const PANEL_LABELS = {
   timeline: 'Timeline',
   topstories: 'Top stories',
   archetypes: 'Archetypes',
-  stats: 'Stats',
   categories: 'Categories',
 };
 
@@ -35,5 +33,4 @@ export function mountPanel(name, section, ctx) {
 registerPanel('timeline', timeline);
 registerPanel('topstories', topstories);
 registerPanel('archetypes', archetypes);
-registerPanel('stats', stats);
 registerPanel('categories', categories);

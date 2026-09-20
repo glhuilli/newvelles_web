@@ -7,18 +7,18 @@
       "number": 1,
       "title": "Five years of news cycles",
       "summary": "Fixture entry: a trimmed slice of the real payload.",
+      "definitions": "A run is one pipeline execution. An observation is a story seen in one run.",
       "first_day": "2021-07-10",
       "last_day": "2021-11-09",
       "published": "2026-09-19",
       "links": {
-        "post": "",
+        "post": "https://glhuilli.github.io/news-cycles-methods.html",
         "code": "https://github.com/glhuilli/newvelles/tree/main/analysis"
       },
       "panels": [
         "timeline",
         "topstories",
         "archetypes",
-        "stats",
         "categories"
       ],
       "payload": "/analysis/entries/five-years/payload.json",

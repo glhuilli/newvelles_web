@@ -42,9 +42,10 @@ index = {
     "entries": [{
         "id": d["entry"], "number": 1, "title": "Five years of news cycles",
         "summary": "Fixture entry: a trimmed slice of the real payload.",
+        "definitions": "A run is one pipeline execution. An observation is a story seen in one run.",
         "first_day": daily[0]["d"], "last_day": daily[-1]["d"], "published": "2026-09-19",
-        "links": {"post": "", "code": "https://github.com/glhuilli/newvelles/tree/main/analysis"},
-        "panels": ["timeline", "topstories", "archetypes", "stats", "categories"],
+        "links": {"post": "https://glhuilli.github.io/news-cycles-methods.html", "code": "https://github.com/glhuilli/newvelles/tree/main/analysis"},
+        "panels": ["timeline", "topstories", "archetypes", "categories"],
         "payload": f"/analysis/entries/{d['entry']}/payload.json",
         "stats": {"runs": d["meta"]["runs"], "stories": d["meta"]["stories"], "days": len(daily), "majors": len(d["categories"]["majors_order"])},
     }],

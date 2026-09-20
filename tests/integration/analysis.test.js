@@ -65,6 +65,8 @@ describe('analysis shell', () => {
     expect(q('.an-entry-head h2').textContent).toBe(entry.title);
     expect(q('.an-lede').textContent).toBe(entry.summary);
     expect(q('.an-entry-links a[href="' + entry.links.code + '"]')).not.toBeNull();
+    expect(q('.an-entry-links a[href="' + entry.links.post + '"]').textContent).toContain('methods post');
+    expect(q('.an-defs').textContent).toBe(entry.definitions);
     expect([...container.querySelectorAll('.an-entry-stats .nv-stat-value')].map((e) => e.textContent)).toEqual([
       entry.stats.runs.toLocaleString(), entry.stats.stories.toLocaleString(),
       entry.stats.days.toLocaleString(), String(entry.stats.majors),
@@ -113,13 +115,6 @@ const open = async (name) => {
 };
 
 describe('table panels', () => {
-  it('stats renders the grains table and top sources', async () => {
-    await open('stats');
-    expect(q('[data-panel-section="stats"] #stats-core table')).not.toBeNull();
-    expect(container.querySelectorAll('[data-panel-section="stats"] #stats-sources tbody tr').length).toBe(payload.stats.top_sources.length);
-    expect(q('[data-panel-section="stats"] #stats-src-title').textContent).toContain(String(payload.stats.n_sources));
-  });
-
   it('categories renders one row per sub-category', async () => {
     await open('categories');
     expect(container.querySelectorAll('[data-panel-section="categories"] #cat-table tbody tr').length).toBe(payload.categories.subs.length);
@@ -191,7 +186,7 @@ describe('top stories and archetypes', () => {
 describe('retired panels', () => {
   it('ledger, lifetimes and learnings are not registered: a stale index entry gets the placeholder', async () => {
     await until(() => expect(q('.an-strip .nv-pills')).not.toBeNull());
-    for (const name of ['ledger', 'lifetimes', 'learnings']) {
+    for (const name of ['ledger', 'lifetimes', 'learnings', 'stats']) {
       setState({ panel: name });
       await until(() => expect(q(`[data-panel-section="${name}"] .an-stub`)).not.toBeNull());
     }

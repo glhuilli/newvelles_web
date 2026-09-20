@@ -58,6 +58,7 @@ function renderEntryHead(e) {
       ${stat(String(e.stats.majors), 'major categories')}
     </div>
     <div class="an-entry-links">${links}</div>
+    ${e.definitions ? `<p class="an-defs">${esc(e.definitions)}</p>` : ''}
   </header>`;
 }
 
