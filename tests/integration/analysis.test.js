@@ -97,3 +97,106 @@ describe('analysis shell', () => {
     await until(() => expect(q('.an-entry-title')).not.toBeNull());
   });
 });
+
+const open = async (name) => {
+  await until(() => expect(q(`.an-strip [data-panel="${name}"]`)).not.toBeNull());
+  q(`.an-strip [data-panel="${name}"]`).click();
+  await until(() => expect(q(`[data-panel-section="${name}"]`).hidden).toBe(false));
+};
+
+describe('table panels', () => {
+  it('ledger renders one row per ledger entry, sorted by peak outlets desc, with sparklines', async () => {
+    await open('ledger');
+    const rows = container.querySelectorAll('[data-panel-section="ledger"] table.ledger tbody tr');
+    expect(rows.length).toBe(payload.ledger.length);
+    const peaks = [...rows].map((r) => Number(r.children[3].textContent));
+    expect(peaks).toEqual([...peaks].sort((a, b) => b - a));
+    expect(container.querySelectorAll('[data-panel-section="ledger"] tbody svg path').length).toBe(payload.ledger.length);
+  });
+
+  it('ledger header click re-sorts', async () => {
+    await open('ledger');
+    const th = [...container.querySelectorAll('[data-panel-section="ledger"] th')].find((h) => h.textContent === 'Days seen');
+    th.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    const days = [...container.querySelectorAll('[data-panel-section="ledger"] tbody tr')].map((r) => Number(r.children[4].textContent));
+    expect(days).toEqual([...days].sort((a, b) => b - a));
+  });
+
+  it('stats renders the grains table and top sources', async () => {
+    await open('stats');
+    expect(q('[data-panel-section="stats"] #stats-core table')).not.toBeNull();
+    expect(container.querySelectorAll('[data-panel-section="stats"] #stats-sources tbody tr').length).toBe(payload.stats.top_sources.length);
+    expect(q('[data-panel-section="stats"] #stats-src-title').textContent).toContain(String(payload.stats.n_sources));
+  });
+
+  it('categories renders one row per sub-category', async () => {
+    await open('categories');
+    expect(container.querySelectorAll('[data-panel-section="categories"] #cat-table tbody tr').length).toBe(payload.categories.subs.length);
+    expect(q('[data-panel-section="categories"] #cat-note').textContent).toContain(payload.categories.labeled.toLocaleString());
+  });
+});
+
+describe('timeline panel', () => {
+  it('renders the strip with one marker per event and the stream with one band per section', async () => {
+    await until(() => expect(q('[data-panel-section="timeline"] #strip svg')).not.toBeNull());
+    const strip = q('[data-panel-section="timeline"] #strip svg');
+    expect(strip.querySelectorAll('circle').length).toBe(payload.events.length);
+    const stream = q('[data-panel-section="timeline"] #stream svg');
+    expect(stream).not.toBeNull();
+    expect(stream.querySelectorAll('g > path').length).toBeGreaterThanOrEqual(payload.sections.length);
+    expect(container.querySelectorAll('[data-panel-section="timeline"] #stream-legend .li').length).toBe(payload.sections.length);
+    expect(q('[data-panel-section="timeline"] #stream-back').hidden).toBe(true);
+  });
+
+  it('clicking a band drills into that major and back returns', async () => {
+    await until(() => expect(q('[data-panel-section="timeline"] #stream svg')).not.toBeNull());
+    const major = Object.keys(payload.drill)[0];
+    const idx = payload.sections.indexOf(major);
+    const band = q('[data-panel-section="timeline"] #stream svg').querySelectorAll('g > path')[idx];
+    band.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    await until(() => expect(q('[data-panel-section="timeline"] #drill-title').textContent).toBe(major));
+    expect(q('[data-panel-section="timeline"] #stream-back').hidden).toBe(false);
+    q('[data-panel-section="timeline"] #stream-back').click();
+    await until(() => expect(q('[data-panel-section="timeline"] #stream-back').hidden).toBe(true));
+  });
+});
+
+describe('top stories, lifetimes, archetypes', () => {
+  it('top stories starts on landmark events with one row per event and a chip per drill major', async () => {
+    await open('topstories');
+    expect(container.querySelectorAll('[data-panel-section="topstories"] #ts-table tbody tr').length).toBe(payload.events.length);
+    expect(container.querySelectorAll('[data-panel-section="topstories"] #ts-chips button').length).toBe(1 + Object.keys(payload.drill).length);
+    expect(q('[data-panel-section="topstories"] #ts-mode').hidden).toBe(true);
+  });
+
+  it('top stories chip switches to a major and shows the mode buttons', async () => {
+    await open('topstories');
+    const major = Object.keys(payload.drill)[0];
+    const chip = [...container.querySelectorAll('[data-panel-section="topstories"] #ts-chips button')].find((b) => b.textContent === major);
+    chip.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    await until(() => expect(q('[data-panel-section="topstories"] #ts-mode').hidden).toBe(false));
+    expect(container.querySelectorAll('[data-panel-section="topstories"] #ts-table tbody tr').length).toBe(payload.drill[major].top.length);
+  });
+
+  it('lifetimes draws base and named circles plus labels', async () => {
+    await open('lifetimes');
+    const svg = q('[data-panel-section="lifetimes"] #lifetimes svg');
+    expect(svg.querySelectorAll('circle').length).toBe(payload.lifetimes.base.length + payload.lifetimes.named.length);
+    expect(q('[data-panel-section="lifetimes"] #lifetimes-title').textContent).toContain(payload.lifetimes.total.toLocaleString());
+  });
+
+  it('archetypes draws one cell per cluster and one per discord', async () => {
+    await open('archetypes');
+    expect(container.querySelectorAll('[data-panel-section="archetypes"] .arch-cell').length).toBe(payload.archetypes.clusters.length);
+    expect(container.querySelectorAll('[data-panel-section="archetypes"] .discord-cell').length).toBe(payload.discords.length);
+    expect(q('[data-panel-section="archetypes"] #arch-note').textContent).toContain(String(payload.archetypes.clusters.length));
+  });
+});
+
+describe('learnings panel', () => {
+  it('renders the static learnings content with its three tables', async () => {
+    await open('learnings');
+    expect(container.querySelectorAll('[data-panel-section="learnings"] table.ledger').length).toBe(3);
+    expect(q('[data-panel-section="learnings"]').textContent).toContain('golden set');
+  });
+});
