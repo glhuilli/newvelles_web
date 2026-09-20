@@ -8,6 +8,7 @@
 import { joinMomentum } from './data.js';
 import { subscribe } from './state.js';
 import { attachHandlers, render, renderError, renderLoading } from './render.js';
+import { configureAnalysis } from './analysis/loader.js';
 
 const SUPPORTED_MAJOR = '0.3';
 
@@ -15,16 +16,20 @@ const SOURCES = {
   fixture: {
     stories: '/data/fixtures/stories_v0.3.0.json',
     momentum: '/data/fixtures/momentum_v0.3.0.json',
+    analysis: { index: '/data/fixtures/analysis/index.json', entry: (id) => `/data/fixtures/analysis/entries/${id}/payload.json` },
   },
   live: {
     stories: '/stories.json',
     momentum: '/momentum.json',
+    analysis: { index: '/analysis/index.json', entry: (id) => `/analysis/entries/${id}/payload.json` },
   },
   local: {
     // your own pipeline output: run the backend CLI, then copy
-    // stories.json + momentum.json into data/local/ (gitignored)
+    // stories.json + momentum.json into data/local/ (gitignored);
+    // analysis: index.json + entries/<id>/payload.json under data/local/analysis/
     stories: '/data/local/stories.json',
     momentum: '/data/local/momentum.json',
+    analysis: { index: '/data/local/analysis/index.json', entry: (id) => `/data/local/analysis/entries/${id}/payload.json` },
   },
 };
 
@@ -54,6 +59,7 @@ async function init() {
   renderLoading(container);
   try {
     const source = dataSource();
+    configureAnalysis({ index: source.analysis.index, entry: source.analysis.entry, fetchJson });
     const [storiesDoc, momentumDoc] = await Promise.all([
       fetchJson(source.stories),
       fetchJson(source.momentum).catch((error) => {

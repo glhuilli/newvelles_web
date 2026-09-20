@@ -2,6 +2,8 @@
  * Nocturne design system — tokens copied verbatim from the design handoff.
  * Do not introduce color values outside these ramps.
  */
+@import './analysis/styles.css';
+
 :root {
   --nv-page: #12141f;
   --nv-surface: #161826;
@@ -84,7 +86,17 @@ button {
 .nv-brand-row { display: flex; align-items: center; gap: 12px; }
 .nv-brand { font-size: 24px; letter-spacing: -0.02em; color: var(--nv-text); font-weight: 500; }
 .nv-dateline { font-size: 11.5px; color: var(--nv-text-dim); }
-.nv-header-actions { display: flex; align-items: center; gap: 8px; }
+.nv-header-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+
+/* tab strip: Today / Wire / Analysis, underline sits on the header hairline */
+.nv-tabs { display: flex; gap: 2px; margin-left: 16px; align-self: flex-end; margin-bottom: -14px; }
+.nv-tab { position: relative; background: none; border: 0; padding: 10px 12px 14px; font: 500 13px var(--nv-font); color: var(--nv-text-muted); letter-spacing: -0.005em; transition: color 0.12s ease; }
+.nv-tab:hover { color: var(--nv-text); }
+.nv-tab[aria-selected="true"] { color: var(--nv-text); }
+.nv-tab::after { content: ''; position: absolute; left: 12px; right: 12px; bottom: -1px; height: 2px; background: transparent; border-radius: 1px; }
+.nv-tab[aria-selected="true"]::after { background: var(--nv-accent); }
+.nv-tab-count { font: 500 10px var(--nv-mono); color: var(--nv-text-faint); margin-left: 6px; letter-spacing: 0.02em; }
+.nv-tab[aria-selected="true"] .nv-tab-count { color: var(--nv-accent); }
 
 .nv-search {
   display: flex;
@@ -366,7 +378,8 @@ button {
   .nv-board { grid-template-columns: minmax(0, 1fr); }
   .nv-cards { grid-template-columns: minmax(0, 1fr); }
   .nv-search { width: 100%; }
-  .nv-header-actions { width: 100%; }
+  .nv-header-actions { width: 100%; margin-left: 0; }
+  .nv-tabs { order: 3; width: 100%; margin-left: -12px; }
   .nv-row {
     grid-template-columns: minmax(0, 1fr);
     gap: 8px;
