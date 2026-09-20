@@ -44,7 +44,7 @@ index = {
         "summary": "Fixture entry: a trimmed slice of the real payload.",
         "first_day": daily[0]["d"], "last_day": daily[-1]["d"], "published": "2026-09-19",
         "links": {"post": "", "code": "https://github.com/glhuilli/newvelles/tree/main/analysis"},
-        "panels": ["timeline", "ledger", "lifetimes", "archetypes", "stats", "categories", "topstories", "learnings"],
+        "panels": ["timeline", "topstories", "archetypes", "stats", "categories"],
         "payload": f"/analysis/entries/{d['entry']}/payload.json",
         "stats": {"runs": d["meta"]["runs"], "stories": d["meta"]["stories"], "days": len(daily), "majors": len(d["categories"]["majors_order"])},
     }],

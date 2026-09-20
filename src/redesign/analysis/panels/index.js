@@ -4,23 +4,17 @@
  * index can add or drop panels without a code change here.
  */
 import * as timeline from './timeline.js';
-import * as ledger from './ledger.js';
-import * as lifetimes from './lifetimes.js';
 import * as archetypes from './archetypes.js';
 import * as stats from './stats.js';
 import * as categories from './categories.js';
 import * as topstories from './topstories.js';
-import * as learnings from './learnings.js';
 
 export const PANEL_LABELS = {
   timeline: 'Timeline',
-  ledger: 'Ledger',
-  lifetimes: 'Lifetimes',
+  topstories: 'Top stories',
   archetypes: 'Archetypes',
   stats: 'Stats',
   categories: 'Categories',
-  topstories: 'Top stories',
-  learnings: 'Learnings',
 };
 
 const PANELS = {};
@@ -39,10 +33,7 @@ export function mountPanel(name, section, ctx) {
 }
 
 registerPanel('timeline', timeline);
-registerPanel('ledger', ledger);
-registerPanel('lifetimes', lifetimes);
+registerPanel('topstories', topstories);
 registerPanel('archetypes', archetypes);
 registerPanel('stats', stats);
 registerPanel('categories', categories);
-registerPanel('topstories', topstories);
-registerPanel('learnings', learnings);

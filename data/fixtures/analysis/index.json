@@ -16,13 +16,10 @@
       },
       "panels": [
         "timeline",
-        "ledger",
-        "lifetimes",
+        "topstories",
         "archetypes",
         "stats",
-        "categories",
-        "topstories",
-        "learnings"
+        "categories"
       ],
       "payload": "/analysis/entries/five-years/payload.json",
       "stats": {

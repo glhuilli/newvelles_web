@@ -20,11 +20,21 @@ export function mount(section, ctx) {
   let tsSort = { key: 'n', dir: 1 };
   const TS_COLS = [['n', '#'], ['event', 'Event'], ['title', 'Anchor story'],
                    ['first', 'Broke'], ['pd', 'Peak day'], ['sub', 'Category'],
-                   ['tags', 'Tags'], ['outlets', 'Outlets'], ['days', 'Days'], ['linked', 'Linked']];
+                   ['tags', 'Tags'], ['outlets', 'Outlets'], ['days', 'Days'], ['linked', 'Linked'],
+                   ['curve', 'Coverage curve']];
   const withCluster = (e) => {
     const C = (D.clusters || {})[e.uid] || {};
     return { ...e, event: C.t || e.event, first: C.b || e.first || e.d,
              pd: C.p || e.pd || e.d, days: C.d ?? e.days, linked: C.n || 1 };
+  };
+  // Same drawing as the retired ledger: outlets per day over the story's
+  // life, resampled to 24 points by the builder (story_curve).
+  const sparkline = (curve) => {
+    if (!curve || curve.length < 2) return '<span class="why">—</span>';
+    const sx = d3.scaleLinear().domain([0, curve.length - 1]).range([2, 118]);
+    const sy = d3.scaleLinear().domain([0, d3.max(curve) || 1]).range([21, 3]);
+    const d = d3.line().x((v, i) => sx(i)).y((v) => sy(v)).curve(d3.curveMonotoneX)(curve);
+    return `<svg viewBox="0 0 120 24" style="width:120px;display:inline-block" aria-hidden="true"><path d="${d}" fill="none" stroke="var(--s1)" stroke-width="1.5"/></svg>`;
   };
 
   function renderTopStories() {
@@ -65,11 +75,13 @@ export function mount(section, ctx) {
         <td class="why">${(e.tags || []).join(', ')}</td>
         <td class="num">${e.outlets}</td>
         <td class="num">${e.days}</td>
-        <td class="num">${e.linked}</td></tr>`).join('')}
+        <td class="num">${e.linked}</td>
+        <td>${sparkline(e.curve)}</td></tr>`).join('')}
       </tbody></table>`;
     $('ts-table').querySelectorAll('th').forEach((th) => {
       th.addEventListener('click', () => {
         const k = th.dataset.k;
+        if (k === 'curve') return;
         tsSort = { key: k, dir: k === tsSort.key ? -tsSort.dir : 1 };
         renderTopStories();
       });

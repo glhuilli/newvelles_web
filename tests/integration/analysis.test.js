@@ -78,14 +78,14 @@ describe('analysis shell', () => {
     expect(q('.an-strip [data-panel="timeline"]').classList.contains('nv-pill--active')).toBe(true);
     for (const name of entry.panels) expect(q(`[data-panel-section="${name}"]`)).not.toBeNull();
     expect(q('[data-panel-section="timeline"]').hidden).toBe(false);
-    expect(q('[data-panel-section="ledger"]').hidden).toBe(true);
+    expect(q('[data-panel-section="topstories"]').hidden).toBe(true);
   });
 
   it('a pill click switches the panel', async () => {
-    await until(() => expect(q('.an-strip [data-panel="ledger"]')).not.toBeNull());
-    q('.an-strip [data-panel="ledger"]').click();
-    expect(getState().panel).toBe('ledger');
-    await until(() => expect(q('[data-panel-section="ledger"]').hidden).toBe(false));
+    await until(() => expect(q('.an-strip [data-panel="topstories"]')).not.toBeNull());
+    q('.an-strip [data-panel="topstories"]').click();
+    expect(getState().panel).toBe('topstories');
+    await until(() => expect(q('[data-panel-section="topstories"]').hidden).toBe(false));
     expect(q('[data-panel-section="timeline"]').hidden).toBe(true);
   });
 
@@ -113,23 +113,6 @@ const open = async (name) => {
 };
 
 describe('table panels', () => {
-  it('ledger renders one row per ledger entry, sorted by peak outlets desc, with sparklines', async () => {
-    await open('ledger');
-    const rows = container.querySelectorAll('[data-panel-section="ledger"] table.ledger tbody tr');
-    expect(rows.length).toBe(payload.ledger.length);
-    const peaks = [...rows].map((r) => Number(r.children[3].textContent));
-    expect(peaks).toEqual([...peaks].sort((a, b) => b - a));
-    expect(container.querySelectorAll('[data-panel-section="ledger"] tbody svg path').length).toBe(payload.ledger.length);
-  });
-
-  it('ledger header click re-sorts', async () => {
-    await open('ledger');
-    const th = [...container.querySelectorAll('[data-panel-section="ledger"] th')].find((h) => h.textContent === 'Days seen');
-    th.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-    const days = [...container.querySelectorAll('[data-panel-section="ledger"] tbody tr')].map((r) => Number(r.children[4].textContent));
-    expect(days).toEqual([...days].sort((a, b) => b - a));
-  });
-
   it('stats renders the grains table and top sources', async () => {
     await open('stats');
     expect(q('[data-panel-section="stats"] #stats-core table')).not.toBeNull();
@@ -169,12 +152,23 @@ describe('timeline panel', () => {
   });
 });
 
-describe('top stories, lifetimes, archetypes', () => {
+describe('top stories and archetypes', () => {
   it('top stories starts on landmark events with one row per event and a chip per drill major', async () => {
     await open('topstories');
     expect(container.querySelectorAll('[data-panel-section="topstories"] #ts-table tbody tr').length).toBe(payload.events.length);
     expect(container.querySelectorAll('[data-panel-section="topstories"] #ts-chips button').length).toBe(1 + Object.keys(payload.drill).length);
     expect(q('[data-panel-section="topstories"] #ts-mode').hidden).toBe(true);
+  });
+
+  it('top stories draws a coverage curve sparkline per row and the column does not sort', async () => {
+    await open('topstories');
+    const heads = [...container.querySelectorAll('[data-panel-section="topstories"] th')].map((h) => h.textContent.trim());
+    expect(heads.at(-1)).toBe('Coverage curve');
+    expect(container.querySelectorAll('[data-panel-section="topstories"] tbody svg path').length).toBe(payload.events.length);
+    const firstBefore = q('[data-panel-section="topstories"] tbody tr td').textContent;
+    [...container.querySelectorAll('[data-panel-section="topstories"] th')].at(-1).dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(q('[data-panel-section="topstories"] tbody tr td').textContent).toBe(firstBefore);
+    expect(q('[data-panel-section="topstories"] th.sorted').textContent).toContain('#');
   });
 
   it('top stories chip switches to a major and shows the mode buttons', async () => {
@@ -186,13 +180,6 @@ describe('top stories, lifetimes, archetypes', () => {
     expect(container.querySelectorAll('[data-panel-section="topstories"] #ts-table tbody tr').length).toBe(payload.drill[major].top.length);
   });
 
-  it('lifetimes draws base and named circles plus labels', async () => {
-    await open('lifetimes');
-    const svg = q('[data-panel-section="lifetimes"] #lifetimes svg');
-    expect(svg.querySelectorAll('circle').length).toBe(payload.lifetimes.base.length + payload.lifetimes.named.length);
-    expect(q('[data-panel-section="lifetimes"] #lifetimes-title').textContent).toContain(payload.lifetimes.total.toLocaleString());
-  });
-
   it('archetypes draws one cell per cluster and one per discord', async () => {
     await open('archetypes');
     expect(container.querySelectorAll('[data-panel-section="archetypes"] .arch-cell').length).toBe(payload.archetypes.clusters.length);
@@ -201,10 +188,12 @@ describe('top stories, lifetimes, archetypes', () => {
   });
 });
 
-describe('learnings panel', () => {
-  it('renders the static learnings content with its three tables', async () => {
-    await open('learnings');
-    expect(container.querySelectorAll('[data-panel-section="learnings"] table.ledger').length).toBe(3);
-    expect(q('[data-panel-section="learnings"]').textContent).toContain('golden set');
+describe('retired panels', () => {
+  it('ledger, lifetimes and learnings are not registered: a stale index entry gets the placeholder', async () => {
+    await until(() => expect(q('.an-strip .nv-pills')).not.toBeNull());
+    for (const name of ['ledger', 'lifetimes', 'learnings']) {
+      setState({ panel: name });
+      await until(() => expect(q(`[data-panel-section="${name}"] .an-stub`)).not.toBeNull());
+    }
   });
 });

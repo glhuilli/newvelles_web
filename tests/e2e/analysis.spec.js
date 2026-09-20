@@ -10,8 +10,9 @@ test.describe('Analysis tab', () => {
     await expect(tab).toHaveAttribute('aria-selected', 'true');
     await expect(page.locator('.an-entry-head h2')).toBeVisible();
     await expect(page.locator('#strip svg')).toBeVisible();
-    await page.locator('.an-strip [data-panel="ledger"]').click();
-    await expect(page.locator('#ledger table.ledger')).toBeVisible();
+    await page.locator('.an-strip [data-panel="topstories"]').click();
+    await expect(page.locator('#ts-table table.ledger')).toBeVisible();
+    await expect(page.locator('#ts-table tbody svg').first()).toBeVisible();
     await page.locator('.nv-tabs [data-go-board]').click();
     await expect(page.locator('.nv-lead')).toBeVisible();
   });
