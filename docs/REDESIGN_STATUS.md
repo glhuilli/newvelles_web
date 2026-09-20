@@ -64,3 +64,23 @@ dependencies here, which unblocks the backend retiring `latest_news.json` —
 but only after the historical backfill exists (see the backend repo's
 `docs/NEXT_STEPS.md`, which also carries the full next-steps roadmap:
 RSS feed-health skill, research-papers vertical, 2021-present analysis).
+
+## Analysis tab (2026-09-20, not deployed)
+
+Header tab strip: Today / Wire / Analysis. The Analysis view lists entries from
+`/analysis/index.json` and loads one payload per entry on demand
+(`/analysis/entries/<id>/payload.json`), both proxied from the public bucket by
+`newvelles_web/analysis.py`. Panels are the archive dashboard ported from
+`newvelles/analysis/site/template.html` onto Nocturne (`src/redesign/analysis/`).
+Design: `newvelles/docs/superpowers/specs/2026-09-19-analysis-tab-design.md`.
+
+Local review with real data:
+
+```
+mkdir -p data/local/analysis/entries/five-years
+cp ../newvelles/analysis/entries/index.json data/local/analysis/
+cp ../newvelles/analysis/entries/five-years/payload.json data/local/analysis/entries/five-years/
+VITE_NV_DATA_SOURCE=local npm run dev   # http://localhost:5173 → Analysis
+```
+
+Nothing is published to S3 and nothing is deployed until the panels are reviewed.
