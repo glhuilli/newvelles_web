@@ -9,6 +9,7 @@ import { joinMomentum } from './data.js';
 import { subscribe } from './state.js';
 import { attachHandlers, render, renderError, renderLoading } from './render.js';
 import { configureAnalysis } from './analysis/loader.js';
+import { startRouting } from './hash.js';
 
 const SUPPORTED_MAJOR = '0.3';
 
@@ -77,6 +78,7 @@ async function init() {
     };
 
     attachHandlers(container);
+    startRouting();
     subscribe(() => render(container, data));
     render(container, data);
   } catch (error) {

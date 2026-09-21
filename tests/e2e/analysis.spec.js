@@ -17,3 +17,22 @@ test.describe('Analysis tab', () => {
     await expect(page.locator('.nv-lead')).toBeVisible();
   });
 });
+
+test.describe('deep links', () => {
+  test('#analysis/five-years/categories opens that entry and panel directly', async ({ page }) => {
+    await page.goto('/redesign.html#analysis/five-years/categories');
+    await expect(page.locator('.nv-tabs [data-go-analysis]')).toHaveAttribute('aria-selected', 'true');
+    await expect(page.locator('#cat-table table.ledger')).toBeVisible();
+    await expect(page.locator('.an-strip [data-panel="categories"]')).toHaveClass(/nv-pill--active/);
+  });
+
+  test('the URL follows navigation and Back returns to the previous view', async ({ page }) => {
+    await page.goto('/redesign.html');
+    await page.locator('.nv-tabs [data-go-analysis]').click();
+    await expect(page).toHaveURL(/#analysis$/);
+    await page.locator('.an-strip [data-panel="archetypes"]').click();
+    await expect(page).toHaveURL(/#analysis\/archetypes$/);
+    await page.goBack();
+    await expect(page.locator('.nv-lead')).toBeVisible();
+  });
+});

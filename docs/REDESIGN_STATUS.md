@@ -84,3 +84,12 @@ VITE_NV_DATA_SOURCE=local npm run dev   # http://localhost:5173 → Analysis
 ```
 
 Nothing is published to S3 and nothing is deployed until the panels are reviewed.
+
+### Deep links (2026-09-20)
+
+`src/redesign/hash.js` maps the hash to the view so other pages can link in:
+`#wire`, `#analysis`, `#analysis/<panel>`, `#analysis/<entry>/<panel>`; the
+board is the bare URL. Switching view pushes a history entry (Back works),
+changing entry or panel replaces. An unrecognised hash is ignored, so an
+ordinary anchor cannot change the view. The methods post links to
+`https://newvelles.com/#analysis`.
