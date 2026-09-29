@@ -65,7 +65,9 @@ describe('analysis shell', () => {
     expect(q('.an-entry-head h2').textContent).toBe(entry.title);
     expect(q('.an-lede').textContent).toBe(entry.summary);
     expect(q('.an-entry-links a[href="' + entry.links.code + '"]')).not.toBeNull();
-    expect(q('.an-entry-links a[href="' + entry.links.post + '"]').textContent).toContain('methods post');
+    // links.post is empty until the methods post is published: no link, no placeholder
+    expect(entry.links.post).toBe('');
+    expect(container.textContent).not.toContain('methods post');
     expect(q('.an-defs').textContent).toBe(entry.definitions);
     expect([...container.querySelectorAll('.an-entry-stats .nv-stat-value')].map((e) => e.textContent)).toEqual([
       entry.stats.runs.toLocaleString(), entry.stats.stories.toLocaleString(),

@@ -83,7 +83,10 @@ cp ../newvelles/analysis/entries/five-years/payload.json data/local/analysis/ent
 VITE_NV_DATA_SOURCE=local npm run dev   # http://localhost:5173 → Analysis
 ```
 
-Nothing is published to S3 and nothing is deployed until the panels are reviewed.
+Panels reviewed 2026-09-20: Timeline, Top stories, Archetypes, Categories.
+Ledger, Lifetimes and Stats were retired; Top stories carries the coverage
+curve. Publish the payload (`make publish-analysis ENTRY=five-years` in the
+backend repo) before deploying this, or the tab 404s.
 
 ### Deep links (2026-09-20)
 
@@ -91,5 +94,6 @@ Nothing is published to S3 and nothing is deployed until the panels are reviewed
 `#wire`, `#analysis`, `#analysis/<panel>`, `#analysis/<entry>/<panel>`; the
 board is the bare URL. Switching view pushes a history entry (Back works),
 changing entry or panel replaces. An unrecognised hash is ignored, so an
-ordinary anchor cannot change the view. The methods post links to
-`https://newvelles.com/#analysis`.
+ordinary anchor cannot change the view. Nothing links in from outside yet:
+the entry's `links.post` stays empty until the methods post is published, and
+the header renders no link (and no placeholder) while it is empty.
