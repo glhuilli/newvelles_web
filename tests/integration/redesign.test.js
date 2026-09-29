@@ -24,7 +24,7 @@ function mount() {
 }
 
 beforeEach(() => {
-  setState({ view: 'board', query: '', cat: 'All', keyword: null, sort: 'rank', open: {} });
+  setState({ view: 'board', query: '', cat: 'All', keyword: null, sort: 'rank', open: {}, entry: null, panel: 'timeline' });
   mount();
 });
 
@@ -186,5 +186,36 @@ describe('board search handoff', () => {
     expect(state.view).toBe('wire');
     expect(state.query).toBe('google');
     expect(container.querySelector('[data-wire-search]').value).toBe('google');
+  });
+});
+
+describe('tab strip', () => {
+  it('renders Today, Wire and Analysis tabs on the board with Today selected', () => {
+    const tabs = container.querySelectorAll('.nv-tabs [role="tab"]');
+    expect([...tabs].map((t) => t.childNodes[0].textContent.trim())).toEqual(['Today', 'Wire', 'Analysis']);
+    expect(container.querySelector('[data-go-board]').getAttribute('aria-selected')).toBe('true');
+    expect(container.querySelector('[data-go-wire] .nv-tab-count').textContent).toBe(
+      String(data.stories.filter((s) => s.kind === 'story').length)
+    );
+  });
+
+  it('has no "Full wire" ghost buttons any more', () => {
+    expect(container.textContent).not.toContain('Full wire');
+  });
+
+  it('the Wire tab switches to the wire and the tab shows as selected', () => {
+    container.querySelector('[data-go-wire]').click();
+    expect(getState().view).toBe('wire');
+    expect(container.querySelector('[data-go-wire]').getAttribute('aria-selected')).toBe('true');
+    expect(container.querySelector('[data-wire-search]')).not.toBeNull();
+  });
+
+  it('the Analysis tab switches the view and hides the search box', () => {
+    container.querySelector('[data-go-analysis]').click();
+    expect(getState().view).toBe('analysis');
+    expect(container.querySelector('[data-go-analysis]').getAttribute('aria-selected')).toBe('true');
+    expect(container.querySelector('[data-board-search]')).toBeNull();
+    expect(container.querySelector('[data-wire-search]')).toBeNull();
+    expect(container.querySelector('[data-analysis-root]')).not.toBeNull();
   });
 });
