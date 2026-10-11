@@ -1,6 +1,7 @@
 import json
 import logging
 from datetime import datetime
+from urllib.error import HTTPError
 
 from flask import Flask, jsonify
 from flask_cors import CORS
@@ -70,7 +71,8 @@ def analysis_entry(entry_id):
         doc = get_entry_payload(entry_id, local=CONFIG['PARAMS']['local'] == 'True')
     except ValueError:
         return jsonify({"error": "invalid entry id"}), 400
-    except FileNotFoundError:
+    except (FileNotFoundError, HTTPError):
+        # missing locally, or 403/404 from the bucket for a key that isn't there
         return jsonify({"error": "unknown entry"}), 404
     return jsonify(doc)
 
