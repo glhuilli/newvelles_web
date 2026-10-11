@@ -3,6 +3,7 @@ origin-proxy pattern as stories.py — so the front end can fetch same-origin
 /analysis/index.json and /analysis/entries/<id>/payload.json.
 
 Entry ids are validated before any path or URL is built."""
+import gzip
 import json
 import re
 import urllib.request
@@ -16,9 +17,23 @@ def is_valid_entry_id(entry_id) -> bool:
     return isinstance(entry_id, str) and ENTRY_ID.match(entry_id) is not None
 
 
+GZIP_MAGIC = b'\x1f\x8b'
+
+
 def _fetch(uri: str):
+    """Read one published file.
+
+    These objects are stored gzipped with Content-Encoding: gzip (they are
+    ~5x smaller that way), and urllib does NOT decompress transparently the
+    way a browser does — so decompress here. stories.json is stored
+    uncompressed, hence stories.py never needed this.
+    """
     with urllib.request.urlopen(uri) as response:
-        return json.loads(response.read().decode('utf-8'))
+        raw = response.read()
+        encoding = (response.headers.get('Content-Encoding') or '').lower()
+    if encoding == 'gzip' or raw[:2] == GZIP_MAGIC:
+        raw = gzip.decompress(raw)
+    return json.loads(raw.decode('utf-8'))
 
 
 def _load_local(path: str):

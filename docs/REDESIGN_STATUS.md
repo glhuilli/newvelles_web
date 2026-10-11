@@ -113,3 +113,24 @@ That line is where a richer run-metadata block should go.
 One search box (`[data-search]`) serves every view. Typing from the board or
 the analysis switches to the wire with the query applied; from the wire it
 narrows in place. The placeholder names the behaviour per view.
+
+### Publishing and proxy gotchas (2026-10-11, found pre-deploy)
+
+Two failures that both looked like a clean success upstream:
+
+1. **The public bucket has no bucket policy.** Objects are readable only via a
+   per-object `public-read` ACL. The first `make publish-analysis` omitted it:
+   upload fine, `s3 ls` and `head-object` fine, every public GET 403. Fixed in
+   the backend's `scripts/publish_analysis.py` (#42).
+2. **Those objects are stored gzipped** with `Content-Encoding: gzip`, and
+   `urllib` does not decompress transparently the way a browser does, so the
+   proxy read gzip bytes and 500'd. `newvelles_web/analysis.py` now
+   decompresses on that header (or on the gzip magic number).
+   `stories.json` never hit this because it is stored uncompressed.
+
+A missing entry now returns 404 rather than 500: a key that is not in the
+bucket raises `HTTPError`, which the route catches alongside
+`FileNotFoundError` (the local-mode equivalent).
+
+Rule both of these imply: after publishing, fetch the **public URL** and the
+**proxy route**. A successful upload proves nothing.
