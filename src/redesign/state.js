@@ -2,13 +2,16 @@
  * State for the redesign — the six variables from the handoff, all
  * client-side, no persistence and no accounts:
  *
- *   view      'board' | 'wire'
+ *   view      'board' | 'wire' | 'analysis'
  *   query     search string
  *   cat       active section filter, default 'All'
  *   keyword   active keyword pill or null
  *   sort      'rank' | 'outlets' | 'newest'
  *   open      { [storyId]: true }   expanded rows
+ *   entry     analysis entry id; null = newest
+ *   panel     analysis panel name
  */
+import { clearAnalysisErrors } from './analysis/loader.js';
 
 let state = {
   view: 'board',
@@ -17,6 +20,8 @@ let state = {
   keyword: null,
   sort: 'rank',
   open: {},
+  entry: null,
+  panel: 'timeline',
 };
 
 const listeners = [];
@@ -89,4 +94,28 @@ export function setSort(sort) {
 
 export function resetFilters() {
   setState({ query: '', cat: 'All', keyword: null });
+}
+
+/** The Analysis tab. Keeps entry and panel so coming back lands where you were. */
+export function goAnalysis() {
+  setState({ view: 'analysis', query: '', keyword: null });
+}
+
+export function selectEntry(entry) {
+  setState({ view: 'analysis', entry, panel: 'timeline' });
+}
+
+export function selectPanel(panel) {
+  setState({ view: 'analysis', panel });
+}
+
+/** Re-run listeners without changing state (used when async data arrives). */
+export function refresh() {
+  setState({});
+}
+
+/** Retry button in the analysis view: forget recorded errors, re-render, which re-attempts the load. */
+export function retryAnalysis() {
+  clearAnalysisErrors();
+  setState({});
 }

@@ -22,16 +22,21 @@ import {
   diveToStory,
   diveToSection,
   getState,
+  goAnalysis,
   goBoard,
   goWire,
   resetFilters,
+  retryAnalysis,
   searchFromBoard,
+  selectEntry,
+  selectPanel,
   setCat,
   setQuery,
   setSort,
   toggleKeyword,
   toggleStory,
 } from './state.js';
+import { analysisContext, mountAnalysis, renderAnalysis } from './analysis/view.js';
 
 export function esc(text) {
   return String(text ?? '')
@@ -95,9 +100,62 @@ function renderCredit() {
   return `<div class="nv-credit">developed by <a href="https://glhuilli.github.io/" target="_blank" rel="noopener">@glhuilli</a></div>`;
 }
 
+/** Context line for the analysis view; gains the archive counts once the payload lands. */
+function formatAnalysisContext(state) {
+  return analysisContext(state) || 'The archive since 2021, in numbers';
+}
+
+const SEARCH_PLACEHOLDER = {
+  board: 'Search all stories',
+  wire: 'Filter stories, sources, headlines',
+  analysis: "Search today's stories",
+};
+
+/**
+ * The fixed bar: title, tab strip, search. Byte-identical in all three views
+ * so nothing in it shifts when you switch tabs. Everything that varies by
+ * view lives in the context line below (renderContextLine).
+ */
+export function renderHeader(state, data) {
+  const { view, query } = state;
+  const storyCount = data.stories.filter((s) => s.kind === 'story').length;
+  const tab = (attr, label, key, count) =>
+    `<button class="nv-tab" role="tab" ${attr} aria-selected="${view === key}">${label}${
+      count ? `<span class="nv-tab-count">${esc(count)}</span>` : ''
+    }</button>`;
+  return `
+  <header class="nv-header">
+    <div class="nv-brand">newvelles</div>
+    <nav class="nv-tabs" role="tablist" aria-label="Views">
+      ${tab('data-go-board', 'Today', 'board')}
+      ${tab('data-go-wire', 'Wire', 'wire', storyCount)}
+      ${tab('data-go-analysis', 'Analysis', 'analysis')}
+    </nav>
+    <div class="nv-header-actions">
+      <div class="nv-search">
+        <span class="nv-icon" aria-hidden="true">⌕</span>
+        <input type="search" data-search name="nv-search" id="nv-search" placeholder="${esc(
+          SEARCH_PLACEHOLDER[view] || SEARCH_PLACEHOLDER.board
+        )}" value="${esc(query)}" aria-label="${esc(SEARCH_PLACEHOLDER[view] || SEARCH_PLACEHOLDER.board)}">
+        ${query ? '<button class="nv-clear" data-clear-query aria-label="Clear search">×</button>' : ''}
+      </div>
+    </div>
+  </header>`;
+}
+
+/**
+ * The line under the bar: what this view is looking at, plus that view's own
+ * controls. The only part of the top of the page that changes between tabs.
+ */
+export function renderContextLine(text, controls = '') {
+  return `<div class="nv-context"><div class="nv-context-text">${text}</div>${
+    controls ? `<div class="nv-context-controls">${controls}</div>` : ''
+  }</div>`;
+}
+
 /* ---------------- board ---------------- */
 
-function renderBoard(data) {
+function renderBoard(data, state) {
   const { stories, doc } = data;
   const board = buildBoardModel(stories);
   const { date, time } = formatDateline(doc);
@@ -167,24 +225,14 @@ function renderBoard(data) {
     .join('');
 
   return `
-  <header class="nv-header">
-    <div class="nv-brand-block">
-      <div class="nv-brand">newvelles</div>
-      <div class="nv-dateline">${esc(date)} · updated ${esc(time)} · ${newsCount} stories from ${doc.feeds} feeds</div>
-    </div>
-    <div class="nv-header-actions">
-      <div class="nv-search">
-        <span class="nv-icon" aria-hidden="true">⌕</span>
-        <input type="search" data-board-search name="board-search" id="board-search" placeholder="Search all stories" value="" aria-label="Search all stories">
-      </div>
-      <button class="nv-ghost" data-go-wire>Full wire →</button>
-    </div>
-  </header>
+  ${renderHeader(state, data)}
+  ${renderContextLine(
+    `${esc(date)} · updated ${esc(time)} · ${newsCount} stories from ${doc.feeds} feeds`
+  )}
   <div class="nv-board">
     <div class="nv-board-main">
       ${leadHtml}
       <div class="nv-cards">${cardsHtml}</div>
-      <button class="nv-ghost" data-go-wire>See all ${newsCount} stories in the wire →</button>
     </div>
     <aside class="nv-rail">
       <div class="nv-rail-block">
@@ -311,27 +359,15 @@ function renderWire(data, state) {
     `<button data-sort="${key}" class="${sort === key ? 'nv-sort--active' : ''}">${label}</button>`;
 
   return `
-  <header class="nv-header">
-    <div class="nv-brand-block">
-      <div class="nv-brand-row">
-        <button class="nv-back" data-go-board>← Today</button>
-        <div class="nv-brand">newvelles</div>
-      </div>
-      <div class="nv-dateline">${esc(date)} · ${stories.length} stories · ${doc.article_count} articles · ${doc.feeds} feeds · click a story to open its coverage</div>
-    </div>
-    <div class="nv-header-actions">
-      <div class="nv-search nv-search--wire">
-        <span class="nv-icon" aria-hidden="true">⌕</span>
-        <input type="search" data-wire-search name="wire-search" id="wire-search" placeholder="Filter stories, sources, headlines" value="${esc(query)}" aria-label="Filter stories">
-        ${query ? '<button class="nv-clear" data-clear-query aria-label="Clear search">×</button>' : ''}
-      </div>
-      <div class="nv-sort" role="group" aria-label="Sort stories">
+  ${renderHeader(state, data)}
+  ${renderContextLine(
+    `${esc(date)} · ${stories.length} stories · ${doc.article_count} articles · ${doc.feeds} feeds · click a story to open its coverage`,
+    `<div class="nv-sort" role="group" aria-label="Sort stories">
         ${sortButton('rank', 'Ranked')}
         ${sortButton('newest', 'Newest')}
         ${sortButton('outlets', 'Most covered')}
-      </div>
-    </div>
-  </header>
+      </div>`
+  )}
   <div class="nv-wire">
     ${keywordBar}
     <div class="nv-filterbar"><div class="nv-pills">${pills}</div></div>
@@ -349,14 +385,14 @@ function renderWire(data, state) {
 
 export function renderLoading(container) {
   container.innerHTML = `<div class="nv-shell"><div class="nv-page">
-    <header class="nv-header"><div class="nv-brand-block"><div class="nv-brand">newvelles</div></div></header>
+    <header class="nv-header"><div class="nv-brand">newvelles</div></header>
     <div class="nv-skeleton" aria-busy="true"></div>
   </div></div>`;
 }
 
 export function renderError(container, onRetry) {
   container.innerHTML = `<div class="nv-shell"><div class="nv-page">
-    <header class="nv-header"><div class="nv-brand-block"><div class="nv-brand">newvelles</div></div></header>
+    <header class="nv-header"><div class="nv-brand">newvelles</div></header>
     <div class="nv-retry">Couldn’t load today’s stories. <button data-retry>Retry</button></div>
   </div></div>`;
   container.querySelector('[data-retry]').addEventListener('click', onRetry);
@@ -366,22 +402,21 @@ export function render(container, data) {
   const state = getState();
 
   // Preserve search focus + caret across re-render (repo lesson: typing must
-  // never lose focus mid-word).
+  // never lose focus mid-word). One box now, shared by every view, so typing
+  // on the board or in the analysis keeps the caret while the view switches.
   const active = document.activeElement;
-  const restore =
-    active && (active.hasAttribute('data-wire-search') || active.hasAttribute('data-board-search'))
-      ? {
-          selector: active.hasAttribute('data-wire-search')
-            ? '[data-wire-search]'
-            : '[data-board-search]',
-          start: active.selectionStart,
-          end: active.selectionEnd,
-        }
-      : null;
+  const restore = active && active.hasAttribute('data-search')
+    ? { selector: '[data-search]', start: active.selectionStart, end: active.selectionEnd }
+    : null;
 
-  container.innerHTML = `<div class="nv-shell"><div class="nv-page">${
-    state.view === 'board' ? renderBoard(data) : renderWire(data, state)
-  }</div></div>`;
+  const body =
+    state.view === 'board'
+      ? renderBoard(data, state)
+      : state.view === 'wire'
+        ? renderWire(data, state)
+        : `${renderHeader(state, data)}${renderContextLine(formatAnalysisContext(state))}${renderAnalysis(state)}`;
+  container.innerHTML = `<div class="nv-shell"><div class="nv-page">${body}</div></div>`;
+  if (state.view === 'analysis') mountAnalysis(container.querySelector('[data-analysis-root]'), state);
 
   if (restore) {
     const input = container.querySelector(restore.selector);
@@ -416,6 +451,14 @@ export function attachHandlers(container) {
       setCat(el.getAttribute('data-cat'));
     } else if ((el = on('data-sort'))) {
       setSort(el.getAttribute('data-sort'));
+    } else if (on('data-go-analysis')) {
+      goAnalysis();
+    } else if ((el = on('data-entry'))) {
+      selectEntry(el.getAttribute('data-entry'));
+    } else if ((el = on('data-panel'))) {
+      selectPanel(el.getAttribute('data-panel'));
+    } else if (on('data-analysis-retry')) {
+      retryAnalysis();
     } else if (on('data-go-wire')) {
       goWire();
     } else if (on('data-go-board')) {
@@ -432,11 +475,11 @@ export function attachHandlers(container) {
   });
 
   container.addEventListener('input', (event) => {
-    if (event.target.hasAttribute('data-wire-search')) {
-      setQuery(event.target.value);
-    } else if (event.target.hasAttribute('data-board-search')) {
-      searchFromBoard(event.target.value);
-    }
+    if (!event.target.hasAttribute('data-search')) return;
+    // Search always lands in the wire: from the board or the analysis it
+    // switches view, from the wire it just narrows what is already there.
+    if (getState().view === 'wire') setQuery(event.target.value);
+    else searchFromBoard(event.target.value);
   });
 
   container.addEventListener('keydown', (event) => {

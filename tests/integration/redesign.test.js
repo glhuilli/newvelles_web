@@ -24,7 +24,7 @@ function mount() {
 }
 
 beforeEach(() => {
-  setState({ view: 'board', query: '', cat: 'All', keyword: null, sort: 'rank', open: {} });
+  setState({ view: 'board', query: '', cat: 'All', keyword: null, sort: 'rank', open: {}, entry: null, panel: 'timeline' });
   mount();
 });
 
@@ -91,7 +91,7 @@ describe('wire', () => {
 
   it('search narrows rows AND the filter counts (the review bug)', () => {
     const target = data.stories.find((s) => s.kind === 'story');
-    const input = container.querySelector('[data-wire-search]');
+    const input = container.querySelector('[data-search]');
     input.value = target.headline.slice(0, 20);
     input.dispatchEvent(new Event('input', { bubbles: true }));
 
@@ -105,7 +105,7 @@ describe('wire', () => {
   });
 
   it('nonsense query shows the empty state with a clear affordance', () => {
-    const input = container.querySelector('[data-wire-search]');
+    const input = container.querySelector('[data-search]');
     input.value = 'zzzz-no-such-story-zzzz';
     input.dispatchEvent(new Event('input', { bubbles: true }));
     expect(container.querySelector('.nv-empty')).not.toBeNull();
@@ -179,12 +179,110 @@ describe('credit', () => {
 
 describe('board search handoff', () => {
   it('typing in the board search switches to the wire with the query applied', () => {
-    const input = container.querySelector('[data-board-search]');
+    const input = container.querySelector('[data-search]');
     input.value = 'google';
     input.dispatchEvent(new Event('input', { bubbles: true }));
     const state = getState();
     expect(state.view).toBe('wire');
     expect(state.query).toBe('google');
-    expect(container.querySelector('[data-wire-search]').value).toBe('google');
+    expect(container.querySelector('[data-search]').value).toBe('google');
+  });
+});
+
+describe('tab strip', () => {
+  it('renders Today, Wire and Analysis tabs on the board with Today selected', () => {
+    const tabs = container.querySelectorAll('.nv-tabs [role="tab"]');
+    expect([...tabs].map((t) => t.childNodes[0].textContent.trim())).toEqual(['Today', 'Wire', 'Analysis']);
+    expect(container.querySelector('[data-go-board]').getAttribute('aria-selected')).toBe('true');
+    expect(container.querySelector('[data-go-wire] .nv-tab-count').textContent).toBe(
+      String(data.stories.filter((s) => s.kind === 'story').length)
+    );
+  });
+
+  it('has no "Full wire" ghost buttons any more', () => {
+    expect(container.textContent).not.toContain('Full wire');
+  });
+
+  it('the Wire tab switches to the wire and the tab shows as selected', () => {
+    container.querySelector('[data-go-wire]').click();
+    expect(getState().view).toBe('wire');
+    expect(container.querySelector('[data-go-wire]').getAttribute('aria-selected')).toBe('true');
+    expect(container.querySelector('[data-search]')).not.toBeNull();
+  });
+
+  it('the Analysis tab switches the view and keeps the search box in place', () => {
+    container.querySelector('[data-go-analysis]').click();
+    expect(getState().view).toBe('analysis');
+    expect(container.querySelector('[data-go-analysis]').getAttribute('aria-selected')).toBe('true');
+    expect(container.querySelector('[data-analysis-root]')).not.toBeNull();
+    const input = container.querySelector('[data-search]');
+    expect(input).not.toBeNull();
+    expect(input.getAttribute('placeholder')).toBe("Search today's stories");
+  });
+
+  it('typing in the search from the analysis view lands in the wire', () => {
+    container.querySelector('[data-go-analysis]').click();
+    const input = container.querySelector('[data-search]');
+    input.value = 'google';
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    expect(getState().view).toBe('wire');
+    expect(getState().query).toBe('google');
+    expect(container.querySelector('[data-search]').value).toBe('google');
+  });
+});
+
+describe('fixed header', () => {
+  const headerShape = () => {
+    const tabs = [...container.querySelectorAll('.nv-tabs [role="tab"]')].map(
+      (t) => t.childNodes[0].textContent.trim()
+    );
+    return {
+      children: [...container.querySelector('.nv-header').children].map((c) => c.className),
+      tabs,
+      hasSearch: !!container.querySelector('.nv-header [data-search]'),
+      brand: container.querySelector('.nv-header .nv-brand').textContent,
+    };
+  };
+
+  it('the bar has the same structure in all three views', () => {
+    const board = headerShape();
+    container.querySelector('[data-go-wire]').click();
+    const wire = headerShape();
+    container.querySelector('[data-go-analysis]').click();
+    const analysis = headerShape();
+    expect(wire).toEqual(board);
+    expect(analysis).toEqual(board);
+    expect(board.children).toEqual(['nv-brand', 'nv-tabs', 'nv-header-actions']);
+    expect(board.hasSearch).toBe(true);
+  });
+
+  it('nothing view-specific leaks into the bar', () => {
+    for (const go of ['data-go-board', 'data-go-wire', 'data-go-analysis']) {
+      container.querySelector(`[${go}]`).click();
+      const header = container.querySelector('.nv-header');
+      expect(header.querySelector('.nv-sort')).toBeNull();
+      expect(header.querySelector('.nv-dateline')).toBeNull();
+      expect(header.querySelector('.nv-context')).toBeNull();
+    }
+  });
+
+  it('the context line carries the dateline, and the sort controls on the wire only', () => {
+    expect(container.querySelector('.nv-context-text').textContent).toContain('stories from');
+    expect(container.querySelector('.nv-context .nv-sort')).toBeNull();
+
+    container.querySelector('[data-go-wire]').click();
+    expect(container.querySelector('.nv-context .nv-sort')).not.toBeNull();
+    expect(container.querySelectorAll('.nv-context [data-sort]').length).toBe(3);
+
+    container.querySelector('[data-go-analysis]').click();
+    expect(container.querySelector('.nv-context .nv-sort')).toBeNull();
+    expect(container.querySelector('.nv-context-text').textContent.length).toBeGreaterThan(0);
+  });
+
+  it('sort still works from the context line', () => {
+    container.querySelector('[data-go-wire]').click();
+    container.querySelector('.nv-context [data-sort="newest"]').click();
+    expect(getState().sort).toBe('newest');
+    expect(container.querySelector('.nv-context [data-sort="newest"]').className).toContain('nv-sort--active');
   });
 });

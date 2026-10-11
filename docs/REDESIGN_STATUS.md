@@ -64,3 +64,52 @@ dependencies here, which unblocks the backend retiring `latest_news.json` —
 but only after the historical backfill exists (see the backend repo's
 `docs/NEXT_STEPS.md`, which also carries the full next-steps roadmap:
 RSS feed-health skill, research-papers vertical, 2021-present analysis).
+
+## Analysis tab (2026-09-20, not deployed)
+
+Header tab strip: Today / Wire / Analysis. The Analysis view lists entries from
+`/analysis/index.json` and loads one payload per entry on demand
+(`/analysis/entries/<id>/payload.json`), both proxied from the public bucket by
+`newvelles_web/analysis.py`. Panels are the archive dashboard ported from
+`newvelles/analysis/site/template.html` onto Nocturne (`src/redesign/analysis/`).
+Design: `newvelles/docs/superpowers/specs/2026-09-19-analysis-tab-design.md`.
+
+Local review with real data:
+
+```
+mkdir -p data/local/analysis/entries/five-years
+cp ../newvelles/analysis/entries/index.json data/local/analysis/
+cp ../newvelles/analysis/entries/five-years/payload.json data/local/analysis/entries/five-years/
+VITE_NV_DATA_SOURCE=local npm run dev   # http://localhost:5173 → Analysis
+```
+
+Panels reviewed 2026-09-20: Timeline, Top stories, Archetypes, Categories.
+Ledger, Lifetimes and Stats were retired; Top stories carries the coverage
+curve. Publish the payload (`make publish-analysis ENTRY=five-years` in the
+backend repo) before deploying this, or the tab 404s.
+
+### Deep links (2026-09-20)
+
+`src/redesign/hash.js` maps the hash to the view so other pages can link in:
+`#wire`, `#analysis`, `#analysis/<panel>`, `#analysis/<entry>/<panel>`; the
+board is the bare URL. Switching view pushes a history entry (Back works),
+changing entry or panel replaces. An unrecognised hash is ignored, so an
+ordinary anchor cannot change the view. Nothing links in from outside yet:
+the entry's `links.post` stays empty until the methods post is published, and
+the header renders no link (and no placeholder) while it is empty.
+
+### Fixed header (2026-10-11)
+
+The top bar (`renderHeader`) is title + tab strip + search, byte-identical in
+all three views, `flex-wrap: nowrap`, with the search at a fixed 260px. Nothing
+in it is sized by view-dependent text, so switching tabs moves it 0px — it used
+to drag the tab strip 629px sideways and grow 53px taller on the wire.
+
+Everything that varies lives in the context line below it
+(`renderContextLine`): the dateline on the board, stories/articles/feeds plus
+the sort controls on the wire, the archive span and counts on the analysis.
+That line is where a richer run-metadata block should go.
+
+One search box (`[data-search]`) serves every view. Typing from the board or
+the analysis switches to the wire with the query applied; from the wire it
+narrows in place. The placeholder names the behaviour per view.

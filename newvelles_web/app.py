@@ -9,6 +9,7 @@ from newvelles_web.config import config
 from newvelles_web.latest_news import get_latest_news
 from newvelles_web.metadata import get_latest_news_metadata
 from newvelles_web.stories import get_momentum, get_stories
+from newvelles_web.analysis import get_entry_payload, get_index
 
 logging.basicConfig(filename='record.log',
                     level=logging.DEBUG,
@@ -24,6 +25,7 @@ if not os.path.exists(static_folder):
 app = Flask(__name__, static_folder=static_folder, static_url_path='')
 CORS(app, resources={r"/news": {"origins": "*"}, r"/metadata": {"origins": "*"},
                      r"/stories.json": {"origins": "*"}, r"/momentum.json": {"origins": "*"},
+                     r"/analysis/*": {"origins": "*"},
                      r"/health": {"origins": "*"}})
 
 CONFIG = config()
@@ -53,6 +55,24 @@ def momentum():
     Return the redesign's momentum.json (rolling 14-day series) from the public bucket
     """
     return jsonify(get_momentum(local=CONFIG['PARAMS']['local'] == 'True'))
+
+
+@app.route("/analysis/index.json")
+def analysis_index():
+    """The Analysis tab's entry index (schema 0.1.0) from the public bucket"""
+    return jsonify(get_index(local=CONFIG['PARAMS']['local'] == 'True'))
+
+
+@app.route("/analysis/entries/<entry_id>/payload.json")
+def analysis_entry(entry_id):
+    """One analysis entry's payload from the public bucket"""
+    try:
+        doc = get_entry_payload(entry_id, local=CONFIG['PARAMS']['local'] == 'True')
+    except ValueError:
+        return jsonify({"error": "invalid entry id"}), 400
+    except FileNotFoundError:
+        return jsonify({"error": "unknown entry"}), 404
+    return jsonify(doc)
 
 
 @app.route("/metadata")
