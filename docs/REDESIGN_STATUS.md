@@ -97,3 +97,19 @@ changing entry or panel replaces. An unrecognised hash is ignored, so an
 ordinary anchor cannot change the view. Nothing links in from outside yet:
 the entry's `links.post` stays empty until the methods post is published, and
 the header renders no link (and no placeholder) while it is empty.
+
+### Fixed header (2026-10-11)
+
+The top bar (`renderHeader`) is title + tab strip + search, byte-identical in
+all three views, `flex-wrap: nowrap`, with the search at a fixed 260px. Nothing
+in it is sized by view-dependent text, so switching tabs moves it 0px — it used
+to drag the tab strip 629px sideways and grow 53px taller on the wire.
+
+Everything that varies lives in the context line below it
+(`renderContextLine`): the dateline on the board, stories/articles/feeds plus
+the sort controls on the wire, the archive span and counts on the analysis.
+That line is where a richer run-metadata block should go.
+
+One search box (`[data-search]`) serves every view. Typing from the board or
+the analysis switches to the wire with the query applied; from the wire it
+narrows in place. The placeholder names the behaviour per view.

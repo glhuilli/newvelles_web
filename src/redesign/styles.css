@@ -73,23 +73,39 @@ button {
 }
 
 /* ---------- header ---------- */
+/**
+ * The fixed bar. Its three children are identical in every view, and nothing
+ * in it is sized by view-dependent text, so the tabs and the search box never
+ * move when you switch tabs. `nowrap` is load-bearing: a wrap here is what
+ * used to push the tab strip to a second row on the wire.
+ */
 .nv-header {
   display: flex;
   align-items: flex-end;
-  justify-content: space-between;
   gap: 20px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   padding-bottom: 14px;
   border-bottom: 1px solid var(--nv-hairline-16);
 }
-.nv-brand-block { display: flex; flex-direction: column; gap: 3px; }
 .nv-brand-row { display: flex; align-items: center; gap: 12px; }
-.nv-brand { font-size: 24px; letter-spacing: -0.02em; color: var(--nv-text); font-weight: 500; }
-.nv-dateline { font-size: 11.5px; color: var(--nv-text-dim); }
+.nv-brand { font-size: 24px; letter-spacing: -0.02em; color: var(--nv-text); font-weight: 500; line-height: 1.1; white-space: nowrap; }
 .nv-header-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
 
+/* the one line that changes per view: what you are looking at + that view's controls */
+.nv-context {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  min-height: 30px;
+  margin-top: -4px;
+}
+.nv-context-text { font-size: 11.5px; color: var(--nv-text-dim); line-height: 1.5; }
+.nv-context-controls { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+
 /* tab strip: Today / Wire / Analysis, underline sits on the header hairline */
-.nv-tabs { display: flex; gap: 2px; margin-left: 16px; align-self: flex-end; margin-bottom: -14px; }
+.nv-tabs { display: flex; gap: 2px; margin-left: 16px; align-self: flex-end; margin-bottom: -14px; flex: 0 0 auto; }
 .nv-tab { position: relative; background: none; border: 0; padding: 10px 12px 14px; font: 500 13px var(--nv-font); color: var(--nv-text-muted); letter-spacing: -0.005em; transition: color 0.12s ease; }
 .nv-tab:hover { color: var(--nv-text); }
 .nv-tab[aria-selected="true"] { color: var(--nv-text); }
@@ -106,9 +122,9 @@ button {
   border: 1px solid var(--nv-border);
   border-radius: 8px;
   padding: 7px 11px;
-  width: 250px;
+  width: 260px;
+  flex: 0 0 260px;
 }
-.nv-search--wire { width: 280px; }
 .nv-search input {
   background: transparent;
   border: 0;
@@ -377,9 +393,15 @@ button {
   .nv-shell { padding: 0 16px 60px; }
   .nv-board { grid-template-columns: minmax(0, 1fr); }
   .nv-cards { grid-template-columns: minmax(0, 1fr); }
-  .nv-search { width: 100%; }
-  .nv-header-actions { width: 100%; margin-left: 0; }
-  .nv-tabs { order: 3; width: 100%; margin-left: -12px; }
+  /* the bar stacks on phones: brand, then tabs, then search, same three rows
+     in every view, so switching tabs still moves nothing */
+  .nv-header { flex-wrap: wrap; gap: 10px; }
+  .nv-search { width: 100%; flex: 1 1 100%; }
+  .nv-header-actions { width: 100%; margin-left: 0; order: 4; }
+  .nv-tabs { order: 3; width: 100%; margin-left: -12px; margin-bottom: 0; }
+  .nv-brand { flex: 1 1 100%; }
+  .nv-context { margin-top: 2px; }
+  .nv-context-controls { margin-left: 0; width: 100%; }
   .nv-row {
     grid-template-columns: minmax(0, 1fr);
     gap: 8px;

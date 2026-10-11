@@ -62,7 +62,7 @@ function renderEntryHead(e) {
   </header>`;
 }
 
-function renderPanels(e, panel, payload) {
+function renderPanels(e, panel) {
   const names = e.panels.includes(panel) ? e.panels : [...e.panels, panel];
   const pills = names
     .map(
@@ -72,13 +72,27 @@ function renderPanels(e, panel, payload) {
         )}</button>`
     )
     .join('');
-  const meta = payload
-    ? `${payload.meta.runs.toLocaleString()} runs · ${payload.meta.stories.toLocaleString()} stories · ${esc(payload.meta.first_day)} → ${esc(payload.meta.last_day)}`
-    : '';
   const sections = names
     .map((n) => `<section class="an-panel" data-panel-section="${esc(n)}" ${n === panel ? '' : 'hidden'}></section>`)
     .join('');
-  return `<div class="an-strip"><div class="nv-pills" role="tablist" aria-label="Analysis panels">${pills}</div><div class="an-meta">${meta}</div></div>${sections}`;
+  // The archive counts live in the header's context line (analysisContext).
+  return `<div class="an-strip"><div class="nv-pills" role="tablist" aria-label="Analysis panels">${pills}</div></div>${sections}`;
+}
+
+/**
+ * Text for the header's context line while the analysis view is open. Empty
+ * until the index lands, so the header can fall back to a static phrase.
+ */
+export function analysisContext(state = {}) {
+  const index = getIndex();
+  if (!index) return '';
+  const entry = resolveEntry(index, state.entry);
+  if (!entry) return '';
+  // The entry's title is already the heading below; this line carries scale.
+  const span = `The archive, ${monthYear(entry.first_day)} – ${monthYear(entry.last_day)}`;
+  const payload = getEntryPayload(entry.id);
+  if (!payload) return span;
+  return `${span} · ${payload.meta.runs.toLocaleString()} runs · ${payload.meta.stories.toLocaleString()} stories`;
 }
 
 const retry = (msg) => `<div class="an-error"><p>${esc(msg)}</p><button class="nv-ghost" data-analysis-retry>Try again</button></div>`;
@@ -100,7 +114,7 @@ export function renderAnalysis(state) {
         renderEntries(index, entry) +
         renderEntryHead(entry) +
         (payload
-          ? renderPanels(entry, state.panel, payload)
+          ? renderPanels(entry, state.panel)
           : err
             ? retry(`Could not load this entry (${err}).`)
             : `<p class="an-loading">Loading ${esc(entry.title)}…</p>`);
